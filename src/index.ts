@@ -4,6 +4,7 @@ import express from "express";
 // require the cors module
 import cors from "cors";
 import authroutes from "./routes/authroutes";
+import postsroutes from "./routes/postsroutes";
 
 // creates an instance of an Express server
 const app = express();
@@ -15,6 +16,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/", authroutes);
+app.use("/", postsroutes);
 
 // define the port
 const port = 3000;
