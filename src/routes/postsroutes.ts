@@ -25,6 +25,7 @@ routes.get("/posts", (req, res) => {
     .catch((error) => console.log(error));
 });
 
+// create a post
 routes.post("/posts", (req, res) => {
   const post = {
     title: req.body.title,
@@ -85,6 +86,26 @@ routes.delete("/posts/:id", (req, res) => {
       }
     })
     .catch((error) => console.log(error));
+});
+
+// create a comment
+routes.post("/posts/:id/comments", (req, res) => {
+  const comment = {
+    body: req.body.body,
+    author_id: req.body.author_id,
+    post_id: req.params.id,
+  };
+  db.one(
+    "INSERT INTO comments(body, author_id, post_id) VALUES(${body}, ${author_id}, ${post_id}) returning id",
+    comment
+  )
+    .then((id) => {
+      return db.oneOrNone("SELECT * FROM comments WHERE id = ${id}", {
+        id: id.id,
+      });
+    })
+    .then((data) => res.json(data))
+    .catch((error) => res.status(500).send(error));
 });
 
 // get a single post by the id
