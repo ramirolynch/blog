@@ -25,4 +25,26 @@ routes.get("/posts", (req, res) => {
     .catch((error) => console.log(error));
 });
 
+routes.get("/posts/:id", (req, res) => {
+  db.oneOrNone(
+    "select posts.id,posts.title,posts.body,posts.post_ts, posts.author_id, users.first_name, users.last_name, users.admin, users.email from posts join users on posts.author_id = users.id where posts.id = ${id}",
+    {
+      id: req.params.id,
+    }
+  )
+    .then((data) => res.json(data))
+    .catch((error) => console.log(error));
+});
+
+routes.get("/comments/:id", (req, res) => {
+  db.oneOrNone(
+    "select posts.id,posts.title,posts.body,posts.post_ts, posts.author_id, users.first_name, users.last_name, users.admin, users.email from posts join users on posts.author_id = users.id where posts.id = ${id}",
+    {
+      id: req.params.id,
+    }
+  )
+    .then((data) => res.json(data))
+    .catch((error) => console.log(error));
+});
+
 export default routes;
