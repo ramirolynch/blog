@@ -25,6 +25,69 @@ routes.get("/posts", (req, res) => {
     .catch((error) => console.log(error));
 });
 
+routes.post("/posts", (req, res) => {
+  const post = {
+    title: req.body.title,
+    body: req.body.body,
+    author_id: req.body.author_id,
+  };
+  db.one(
+    "INSERT INTO posts(title, body, author_id) VALUES(${title}, ${body}, ${author_id}) returning id",
+    post
+  )
+    .then((id) => {
+      return db.oneOrNone("SELECT * FROM posts WHERE id = ${id}", {
+        id: id.id,
+      });
+    })
+    .then((data) => res.json(data))
+    .catch((error) => res.status(500).send(error));
+});
+
+// edit post
+routes.put("/posts/:id", (req, res) => {
+  db.many("select * from posts")
+    .then((posts) => {
+      let elem: any = posts.find((m) => m.id === +req.params.id);
+
+      if (!elem) {
+        res.status(404).json({ error: "Post not found" });
+      } else {
+        db.none(
+          "update posts set title=${title}, body=${body} where id = ${id}",
+          {
+            title: req.body.title,
+            body: req.body.body,
+          }
+        );
+        res.send(req.body);
+      }
+    })
+    .catch((error) => console.log(error));
+});
+
+// delete post
+routes.delete("/posts/:id", (req, res) => {
+  db.many("select * from posts")
+    .then((elements) => {
+      let elem: any = elements.find((e) => e.id === +req.params.id);
+
+      if (!elem) {
+        res.status(404).json({ error: "Post not found" });
+      } else {
+        db.none("delete from posts where id = ${id}", {
+          id: +req.params.id,
+        });
+
+        res
+          .status(200)
+          .json({ message: `Post with id ${+req.params.id} deleted` });
+      }
+    })
+    .catch((error) => console.log(error));
+});
+
+// get a single post by the id
 routes.get("/posts/:id", (req, res) => {
   db.oneOrNone(
     "select posts.id,posts.title,posts.body,posts.post_ts, posts.author_id, users.first_name, users.last_name, users.admin, users.email from posts join users on posts.author_id = users.id where posts.id = ${id}",
@@ -36,9 +99,10 @@ routes.get("/posts/:id", (req, res) => {
     .catch((error) => console.log(error));
 });
 
-routes.get("/comments/:id", (req, res) => {
-  db.oneOrNone(
-    "select posts.id,posts.title,posts.body,posts.post_ts, posts.author_id, users.first_name, users.last_name, users.admin, users.email from posts join users on posts.author_id = users.id where posts.id = ${id}",
+// get all comments for the post id
+routes.get("/posts/:id/comments", (req, res) => {
+  db.manyOrNone(
+    "select comments.id, comments.body,comments.comment_ts,comments.author_id,comments.post_id,users.first_name,users.last_name, users.email from comments join users on comments.author_id = users.id join posts on comments.post_id = posts.id where posts.id = ${id}",
     {
       id: req.params.id,
     }
@@ -46,5 +110,16 @@ routes.get("/comments/:id", (req, res) => {
     .then((data) => res.json(data))
     .catch((error) => console.log(error));
 });
+
+// routes.get("/comments/:id", (req, res) => {
+//   db.oneOrNone(
+//     "select posts.id,posts.title,posts.body,posts.post_ts, posts.author_id, users.first_name, users.last_name, users.admin, users.email from posts join users on posts.author_id = users.id where posts.id = ${id}",
+//     {
+//       id: req.params.id,
+//     }
+//   )
+//     .then((data) => res.json(data))
+//     .catch((error) => console.log(error));
+// });
 
 export default routes;
