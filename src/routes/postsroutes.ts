@@ -3,6 +3,7 @@ import express from "express";
 
 // create a new Router object
 const routes = express.Router();
+import { checkJwt } from "../middleware/authmiddleware";
 
 // require the express module
 import "dotenv/config";
@@ -24,6 +25,9 @@ routes.get("/posts", (req, res) => {
     .then((posts) => res.json(posts))
     .catch((error) => console.log(error));
 });
+
+// ✨ New! Mount authorization middleware
+routes.use(checkJwt);
 
 // create a post
 routes.post("/posts", (req, res) => {

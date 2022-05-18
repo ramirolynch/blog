@@ -3,6 +3,7 @@ import express from "express";
 
 // create a new Router object
 const routes = express.Router();
+import { checkJwt } from "../middleware/authmiddleware";
 
 // require the express module
 import "dotenv/config";
