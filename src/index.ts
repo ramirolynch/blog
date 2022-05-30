@@ -9,13 +9,6 @@ import cors from "cors";
 import authroutes from "./routes/authroutes";
 import postsroutes from "./routes/postsroutes";
 
-// app variables
-if (!process.env.PORT) {
-  process.exit(1);
-}
-
-const PORT: number = parseInt(process.env.PORT as string, 10);
-
 // creates an instance of an Express server
 const app = express();
 
@@ -29,6 +22,7 @@ app.use(express.json());
 app.use("/", authroutes);
 app.use("/", postsroutes);
 
+const PORT = 3000;
 // run the server
 app.listen(PORT, () => console.log(`Listening on port: ${PORT}.`));
 
