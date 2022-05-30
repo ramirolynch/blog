@@ -31,3 +31,5 @@ app.use("/", postsroutes);
 
 // run the server
 app.listen(PORT, () => console.log(`Listening on port: ${PORT}.`));
+
+module.exports = app;
