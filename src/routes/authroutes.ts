@@ -3,6 +3,7 @@ import express from "express";
 
 // create a new Router object
 const routes = express.Router();
+import db from "./dbconnection";
 import { checkJwt } from "../middleware/authmiddleware";
 
 // require the express module
@@ -11,17 +12,6 @@ import "dotenv/config";
 import pg from "pg-promise";
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
-
-const db = pg()({
-  host: process.env.PG_HOST,
-  port: 5432,
-  user: process.env.PG_USER,
-  password: process.env.PG_PASSWORD,
-  database: process.env.PG_DATABASE,
-  ssl: {
-    rejectUnauthorized: false,
-  },
-});
 
 routes.post("/signup", (req, res) => {
   const hash = bcrypt.hashSync(req.body.password, saltRounds);
