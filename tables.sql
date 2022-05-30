@@ -6,7 +6,7 @@ id serial primary key,
 	last_name varchar(150),
 	admin boolean,
 	email varchar(200),
-	password varchar(200),
+	password varchar(200)
 );
 
 insert into users(first_name,last_name, admin, email, password) values ('Ramiro', 'Lynch', 'true', 'ramiro@gmail.com', 'ramipass'),('Carmen', 'Vergara', 'true', 'carmen@gmail.com', 'carmenpass'),('Alejandro', 'Gonzalez', 'false', 'alejandro@gmail.com', 'alepass');
