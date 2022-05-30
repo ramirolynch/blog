@@ -26,10 +26,10 @@ routes.get("/posts", (req, res) => {
     .catch((error) => console.log(error));
 });
 
-// ✨ New! Mount authorization middleware
-routes.use(checkJwt);
-
+// // ✨ New! Mount authorization middleware
+// routes.use(checkJwt);
 // create a post
+
 routes.post("/posts", (req, res) => {
   const post = {
     title: req.body.title,
@@ -47,6 +47,18 @@ routes.post("/posts", (req, res) => {
     })
     .then((data) => res.json(data))
     .catch((error) => res.status(500).send(error));
+});
+
+// get a single post by the id
+routes.get("/posts/:id", (req, res) => {
+  db.oneOrNone(
+    "select posts.id,posts.title,posts.body,posts.post_ts, posts.author_id, users.first_name, users.last_name, users.admin, users.email from posts join users on posts.author_id = users.id where posts.id = ${id}",
+    {
+      id: req.params.id,
+    }
+  )
+    .then((data) => res.json(data))
+    .catch((error) => console.log(error));
 });
 
 // edit post
@@ -149,18 +161,6 @@ routes.delete("/posts/comments/:id", (req, res) => {
           .json({ message: `Post with id ${+req.params.id} deleted` });
       }
     })
-    .catch((error) => console.log(error));
-});
-
-// get a single post by the id
-routes.get("/posts/:id", (req, res) => {
-  db.oneOrNone(
-    "select posts.id,posts.title,posts.body,posts.post_ts, posts.author_id, users.first_name, users.last_name, users.admin, users.email from posts join users on posts.author_id = users.id where posts.id = ${id}",
-    {
-      id: req.params.id,
-    }
-  )
-    .then((data) => res.json(data))
     .catch((error) => console.log(error));
 });
 

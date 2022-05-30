@@ -26,7 +26,7 @@ create table comments (
 	body text not null,
 	comment_ts timestamp not null default now(),
 	author_id integer references users,
-    post_id integer references posts
+    post_id integer references posts on delete cascade
 );
 
 insert into comments(body, author_id, post_id) values ('My exact same thoughts', 1, 1),('I disagree', 2,1),('Seriously?',3,1);
